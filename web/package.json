@@ -1,4 +1,8 @@
 {
+    "name": "dota2-hero-explorer",
+    "version": "0.0.1",
+    "author": "CWhy <chenyu.nus@gmail.com>",
+    "license": "GPL-3.0",
     "dependencies": {
         "ace-css": "^1.1.0",
         "deeplearn": "^0.3.15",
@@ -7,6 +11,7 @@
     "devDependencies": {
         "clean-webpack-plugin": "^0.1.17",
         "css-loader": "^0.28.7",
+        "elm-typescript-interop": "^0.0.4",
         "elm-webpack-loader": "^4.4.0",
         "file-loader": "^1.1.6",
         "foreman": "^2.0.0",
@@ -22,6 +27,8 @@
         "webpack-merge": "^4.1.1"
     },
     "scripts": {
+        "elm-ts-interop":
+        "elm-typescript-interop src/Main.elm src/NNActor.elm --output=src/Main/index.d.ts",
         "build": "webpack --config webpack.prod.js",
         "watch": "webpack-dev-server --progress --colors --config webpack.dev.js",
         "watch-prod": "webpack-dev-server --progress --colors --config webpack.prod.js",

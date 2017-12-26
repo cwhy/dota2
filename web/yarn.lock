@@ -1295,6 +1295,12 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
+elm-typescript-interop@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/elm-typescript-interop/-/elm-typescript-interop-0.0.4.tgz#c544d40b2ebc020f3cd7d9270b42e117387d33a6"
+  dependencies:
+    minimist "^1.2.0"
+
 elm-webpack-loader@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/elm-webpack-loader/-/elm-webpack-loader-4.4.0.tgz#dd7a3b628b7abc4fac38e3045d3ab6e57187e9b6"

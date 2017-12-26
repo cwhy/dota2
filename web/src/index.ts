@@ -1,9 +1,22 @@
-document.body.innerHTML += "Welcome to JSHELL"
+// document.body.innerHTML += "Welcome to JSHELL"
 
 import {Scalar, Graph, Tensor, SGDOptimizer, CostReduction, Session,
 	ENV, NDArray,
 	InCPUMemoryShuffledInputProviderBuilder} from 'deeplearn';
+// import { Main } from "./Main.elm";
+import * as Elm from './Main'
 
+// declare function require(path: string): any;
+// require('./index.html');
+
+let app = Elm.Main.fullscreen();
+let sendEntry = async (data_: string) => {
+  await app.ports.dataIn.send({ tag: "NewData", data: {content:  data_} });
+}
+
+function wait(ms:number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const graph = new Graph();
 // Make a new input in the graph, called 'x', with shape [] (a Scalar).
@@ -29,7 +42,8 @@ const math = ENV.math;
 const session = new Session(graph, math);
 
 // For more information on scope / track, check out the [tutorial on performance](/docs/tutorials/performance.html).
-math.scope(async (keep, track) => {
+async function run() {
+  await math.scope(async (keep, track) => {
   /**
    * Inference
    */
@@ -38,10 +52,11 @@ math.scope(async (keep, track) => {
   // NOTE: "a", "b", and "c" are randomly initialized, so this will give us
   // something random.
   let result: NDArray =
-      session.eval(y, [{tensor: x, data: track(Scalar.new(4))}]);
+  session.eval(y, [{tensor: x, data: track(Scalar.new(4))}]);
   console.log(result.shape);
-  console.log('result', await result.data());
-
+  let val_result = await result.data()
+  console.log('result', val_result);
+  console.log(await sendEntry(String(val_result)));
   /**
    * Training
    */
@@ -50,25 +65,25 @@ math.scope(async (keep, track) => {
   // The values given here are for values a = 3, b = 2, c = 1, with random
   // noise added to the output so it's not a perfect fit.
   const xs: Scalar[] = [
-    track(Scalar.new(0)),
-    track(Scalar.new(1)),
-    track(Scalar.new(2)),
-    track(Scalar.new(3))
+  track(Scalar.new(0)),
+  track(Scalar.new(1)),
+  track(Scalar.new(2)),
+  track(Scalar.new(3))
   ];
   const ys: Scalar[] = [
-    track(Scalar.new(1.1)),
-    track(Scalar.new(5.9)),
-    track(Scalar.new(16.8)),
-    track(Scalar.new(33.9))
+  track(Scalar.new(1.1)),
+  track(Scalar.new(5.9)),
+  track(Scalar.new(16.8)),
+  track(Scalar.new(33.9))
   ];
   // When training, it's important to shuffle your data!
   const shuffledInputProviderBuilder =
-      new InCPUMemoryShuffledInputProviderBuilder([xs, ys]);
+  new InCPUMemoryShuffledInputProviderBuilder([xs, ys]);
   const [xProvider, yProvider] =
-      shuffledInputProviderBuilder.getInputProviders();
+  shuffledInputProviderBuilder.getInputProviders();
 
   // Training is broken up into batches.
-  const NUM_BATCHES = 20;
+  const NUM_BATCHES = 200;
   const BATCH_SIZE = xs.length;
   // Before we start training, we need to provide an optimizer. This is the
   // object that is responsible for updating weights. The learning rate param
@@ -81,7 +96,7 @@ math.scope(async (keep, track) => {
     // Train takes a cost tensor to minimize; this call trains one batch and
     // returns the average cost of the batch as a Scalar.
     const costValue = session.train(
-        cost,
+      cost,
         // Map input providers to Tensors on the graph.
         [{tensor: x, data: xProvider}, {tensor: yLabel, data: yProvider}],
         BATCH_SIZE, optimizer, CostReduction.MEAN);
@@ -94,4 +109,8 @@ math.scope(async (keep, track) => {
   console.log('result should be ~57.0:');
   console.log(result.shape);
   console.log(await result.data());
+  await sendEntry(String(await result.data()));
 });
+
+}
+run();

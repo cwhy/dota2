@@ -3,15 +3,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'app.bundle.js'
   },
   module: {
     loaders: [
-      // all files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'
-      { test: /\.tsx?$/, loader: "ts-loader" },
       {
         test:    /\.elm$/,
         exclude: [/elm-stuff/, /node_modules/],
@@ -36,16 +34,21 @@ module.exports = {
         test:    /\.html$/,
         exclude: /node_modules/,
         loader:  'file-loader?name=[name].[ext]',
-      }
+      },
+      // all files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'
+      { test: /\.tsx?$/, loader: "ts-loader" }
 
     ],
-    noParse: /\.elm$/
+    noParse: /\.elm$/,
+  },
+  resolve: {
+      extensions: ['.js', '.ts', '.json', '.elm']
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
- //   new HtmlWebpackPlugin({
- //     title: 'New App! PogChamp'
- //   })
+    new HtmlWebpackPlugin({
+      title: 'New App! PogChamp'
+    })
   ],
   devServer: {
     contentBase: path.join(__dirname, "dist"),

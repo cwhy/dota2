@@ -2,3 +2,4 @@
 .idea/*
 web/node_modules/*
 web/elm-stuff/*
+web/dist/*

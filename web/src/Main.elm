@@ -1,18 +1,21 @@
 module Main exposing (..)
 
 import Html exposing (Html, div, text, program)
+import NNActor exposing (DataIn(NewData), receiveData)
 
 
 -- MODEL
 
 
 type alias Model =
-    String
+    { title : String
+    , data : String
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( "Dota2 Hero Explorer", Cmd.none )
+    ( { title = "Dota2 Hero Explorer", data = "" }, Cmd.none )
 
 
 
@@ -21,6 +24,8 @@ init =
 
 type Msg
     = NoOp
+    | Outside DataIn
+    | LogErr String
 
 
 
@@ -30,7 +35,9 @@ type Msg
 view : Model -> Html Msg
 view model =
     div []
-        [ text model ]
+        [ div [] [ text model.title ]
+        , div [] [ text model.data ]
+        ]
 
 
 
@@ -43,6 +50,14 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        Outside dataIn ->
+            case dataIn of
+                NewData newData ->
+                    { model | data = newData.content } ! []
+
+        LogErr err ->
+            model ! [ Debug.log "LogErr" Cmd.none ]
+
 
 
 -- SUBSCRIPTIONS
@@ -50,7 +65,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    receiveData Outside LogErr
 
 
 
