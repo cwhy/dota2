@@ -24,7 +24,7 @@ train_step = tf.train.RMSPropOptimizer(0.01).minimize(loss)
 sess = tf.Session()
 init = tf.global_variables_initializer()
 sess.run(init)
-n_iters = 1000
+n_iters = 3000
 # train for n_iter iterations
 data_batch = next(data_gen)
 x_train, y_train = du.get_cbow_pairs(data_batch)
