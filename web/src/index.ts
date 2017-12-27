@@ -9,10 +9,6 @@ import * as Elm from './Main'
 // declare function require(path: string): any;
 // require('./index.html');
 
-let app = Elm.Main.fullscreen();
-let sendEntry = async (data_: string) => {
-  await app.ports.dataIn.send({ tag: "NewData", data: {content:  data_} });
-}
 
 function wait(ms:number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -42,7 +38,24 @@ const math = ENV.math;
 const session = new Session(graph, math);
 
 // For more information on scope / track, check out the [tutorial on performance](/docs/tutorials/performance.html).
+let pageReady_flag:boolean = false;
+const pageReady = new Promise((resolve, reject) => {
+  if (pageReady_flag == true) resolve();
+});
 async function run() {
+  const app = Elm.Main.fullscreen();
+  await wait(0)
+  app.ports.dataOut.subscribe(msg => {
+      if (msg.tag == "LogError") {
+        console.error(msg.data);
+      } else if (msg.tag == "PageReady"){
+        console.log('PageReady');
+        pageReady_flag = true;
+      }
+  });
+  let sendEntry = async (data_: string) => {
+    return app.ports.dataIn.send({ tag: "NewData", data: {content:  data_} });
+  }
   await math.scope(async (keep, track) => {
   /**
    * Inference
@@ -54,9 +67,8 @@ async function run() {
   let result: NDArray =
   session.eval(y, [{tensor: x, data: track(Scalar.new(4))}]);
   console.log(result.shape);
-  let val_result = await result.data()
-  console.log('result', val_result);
-  console.log(await sendEntry(String(val_result)));
+  await sendEntry(String(await result.data()));
+  console.log('result', await result.data());
   /**
    * Training
    */
@@ -83,7 +95,7 @@ async function run() {
   shuffledInputProviderBuilder.getInputProviders();
 
   // Training is broken up into batches.
-  const NUM_BATCHES = 200;
+  const NUM_BATCHES = 100;
   const BATCH_SIZE = xs.length;
   // Before we start training, we need to provide an optimizer. This is the
   // object that is responsible for updating weights. The learning rate param
@@ -101,7 +113,10 @@ async function run() {
         [{tensor: x, data: xProvider}, {tensor: yLabel, data: yProvider}],
         BATCH_SIZE, optimizer, CostReduction.MEAN);
 
+   // pageReady
+    // await wait(0)
     console.log('average cost: ' + await costValue.data());
+    sendEntry(String(await costValue.data()));
   }
 
   // Now print the value from the trained model for x = 4, should be ~57.0.

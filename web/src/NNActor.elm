@@ -11,12 +11,31 @@ sendData data =
         NoOp ->
             Cmd.none
 
+        PageReady ->
+            dataOut { tag = "PageReady", data = Json.Encode.null }
+
+        LogError err ->
+            dataOut { tag = "LogError", data = Json.Encode.string err }
+
 
 type DataIn
     = NewData NNData
 
 
+type DataOut
+    = NoOp
+    | PageReady
+    | LogError String
+
+
+type alias GenericOutsideData =
+    { tag : String, data : Json.Encode.Value }
+
+
 port dataIn : (GenericOutsideData -> msg) -> Sub msg
+
+
+port dataOut : GenericOutsideData -> Cmd msg
 
 
 receiveData : (DataIn -> msg) -> (String -> msg) -> Sub msg
@@ -35,11 +54,3 @@ receiveData dataHandler errorHandler =
                 _ ->
                     errorHandler <| "Unexpected info from outside: " ++ toString outsideInfo
         )
-
-
-type DataOut
-    = NoOp
-
-
-type alias GenericOutsideData =
-    { tag : String, data : Json.Encode.Value }

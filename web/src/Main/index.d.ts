@@ -9,6 +9,9 @@ export interface App {
     dataIn: {
       send(data: { tag: string; data: any }): void
     }
+    dataOut: {
+      subscribe(callback: (data: { tag: string; data: any }) => void): void
+    }
   }
 }
     

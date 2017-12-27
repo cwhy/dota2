@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, div, text, program)
-import NNActor exposing (DataIn(NewData), receiveData)
+import NNActor exposing (DataIn(NewData), sendData, receiveData, DataOut(PageReady, LogError))
 
 
 -- MODEL
@@ -53,10 +53,10 @@ update msg model =
         Outside dataIn ->
             case dataIn of
                 NewData newData ->
-                    { model | data = newData.content } ! []
+                    { model | data = newData.content } ! [ sendData PageReady ]
 
         LogErr err ->
-            model ! [ Debug.log "LogErr" Cmd.none ]
+            model ! [ sendData (LogError err) ]
 
 
 
