@@ -1,131 +1,168 @@
 // document.body.innerHTML += "Welcome to JSHELL"
 
 import {Scalar, Graph, Tensor, SGDOptimizer, CostReduction, Session,
-	ENV, NDArray,
-	InCPUMemoryShuffledInputProviderBuilder} from 'deeplearn';
+    ENV, NDArray, Array2D, Array1D, InputProvider,
+    InCPUMemoryShuffledInputProviderBuilder} from 'deeplearn';
 // import { Main } from "./Main.elm";
 import * as Elm from './Main'
+// import * as hero_id_map from './.json';
+declare function require(path: string): any;
+var hero_id_map = require('./hero_id_map.json');
+let map_hero_id: (a:string) => number = (a) => hero_id_map[a]
 
-// declare function require(path: string): any;
 // require('./index.html');
 
 
 function wait(ms:number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+async function get(url:any) : Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        xhr.onreadystatechange = function (event) {
+            if (xhr.readyState !== 4) return;
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response);//OK
+            } else {
+                reject(xhr.statusText);//Error
+            }
+        };
+        xhr.open('GET', url, true);//Async
+        xhr.send();
+    });
+}
 const graph = new Graph();
-// Make a new input in the graph, called 'x', with shape [] (a Scalar).
-const x: Tensor = graph.placeholder('x', []);
-// Make new variables in the graph, 'a', 'b', 'c' with shape [] and random
-// initial values.
-const a: Tensor = graph.variable('a', Scalar.new(Math.random()));
-const b: Tensor = graph.variable('b', Scalar.new(Math.random()));
-const c: Tensor = graph.variable('c', Scalar.new(Math.random()));
+const hidden_dim = 2
+const X: Tensor = graph.placeholder('X', [113]);
+const Y: Tensor = graph.placeholder('Y label', [113]);
+const E: Tensor = graph.variable('E', Array2D.randUniform([113, hidden_dim], -1, 1));
+const Eb: Tensor = graph.variable('Eb', Array1D.randUniform([hidden_dim], -1, 1));
+const D: Tensor = graph.variable('D', Array2D.randUniform([hidden_dim, 113], -1, 1));
+const Db: Tensor = graph.variable('Db', Array1D.randUniform([113], -1, 1));
 // Make new tensors representing the output of the operations of the quadratic.
-const order2: Tensor = graph.multiply(a, graph.square(x));
-const order1: Tensor = graph.multiply(b, x);
-const y: Tensor = graph.add(graph.add(order2, order1), c);
+const H: Tensor = graph.add(graph.matmul(X, E), Eb);
+const Yhat: Tensor = graph.add(graph.matmul(H, D), Db)
 
-// When training, we need to provide a label and a cost function.
-const yLabel: Tensor = graph.placeholder('y label', []);
-// Provide a mean squared cost function for training. cost = (y - yLabel)^2
-const cost: Tensor = graph.meanSquaredCost(y, yLabel);
+const cost: Tensor = graph.softmaxCrossEntropyCost(Yhat, Y);
 
-// At this point the graph is set up, but has not yet been evaluated.
-// **deeplearn.js** needs a Session object to evaluate a graph.
 const math = ENV.math;
 const session = new Session(graph, math);
 
-// For more information on scope / track, check out the [tutorial on performance](/docs/tutorials/performance.html).
 let pageReady_flag:boolean = false;
 const pageReady = new Promise((resolve, reject) => {
-  if (pageReady_flag == true) resolve();
+    if (pageReady_flag == true) resolve();
 });
+
+function parse_matches(matches: any): number[][]{
+    let match_parse:(match:any) => number[] = (match) => {
+        let draft_str:string = ""
+        if (match.radiant_win){
+            draft_str = match.radiant_team
+        }else{
+            draft_str = match.dire_team
+        }
+        return draft_str.split(',').map((a:string) => map_hero_id(a))
+    }
+    return matches.map(match_parse)
+}
+
+function get_heros(draft_list: number[][]): Array2D{
+    let draft_arr = Array2D.zeros([draft_list.length, 113])
+    for (let i:number = 0; i < draft_list.length; i++){
+        for (let j of draft_list[i]){
+            draft_arr.set(1.0, i, j)
+        }
+    }
+    return draft_arr
+}
+
+function get_xs_ys(draft_list: number[][]): [Array1D[], Array1D[]]{
+    let xs: Array1D[] = []
+    let ys: Array1D[] = []
+    for (let i:number = 0; i < draft_list.length; i++){
+        for (let j:number = 0; j < 5; j++){
+            let x = Array1D.zeros([113])
+            let y = Array1D.zeros([113])
+            let y_idx:number = draft_list[i][j]
+            y.set(1.0, y_idx)
+            for (let k of draft_list[i]){
+                if (k != y_idx) x.set(1.0, k)
+            }
+            xs.push(x)
+            ys.push(y)
+        }
+    }
+    return [xs, ys]
+}
+
 async function run() {
-  const app = Elm.Main.fullscreen();
-  await wait(0)
-  app.ports.dataOut.subscribe(msg => {
-      if (msg.tag == "LogError") {
-        console.error(msg.data);
-      } else if (msg.tag == "PageReady"){
-        console.log('PageReady');
-        pageReady_flag = true;
-      }
-  });
-  let sendEntry = async (data_: string) => {
-    return app.ports.dataIn.send({ tag: "NewData", data: {content:  data_} });
-  }
-  await math.scope(async (keep, track) => {
-  /**
-   * Inference
-   */
-  // Now we ask the graph to evaluate (infer) and give us the result when
-  // providing a value 4 for "x".
-  // NOTE: "a", "b", and "c" are randomly initialized, so this will give us
-  // something random.
-  let result: NDArray =
-  session.eval(y, [{tensor: x, data: track(Scalar.new(4))}]);
-  console.log(result.shape);
-  await sendEntry(String(await result.data()));
-  console.log('result', await result.data());
-  /**
-   * Training
-   */
-  // Now let's learn the coefficients of this quadratic given some data.
-  // To do this, we need to provide examples of x and y.
-  // The values given here are for values a = 3, b = 2, c = 1, with random
-  // noise added to the output so it's not a perfect fit.
-  const xs: Scalar[] = [
-  track(Scalar.new(0)),
-  track(Scalar.new(1)),
-  track(Scalar.new(2)),
-  track(Scalar.new(3))
-  ];
-  const ys: Scalar[] = [
-  track(Scalar.new(1.1)),
-  track(Scalar.new(5.9)),
-  track(Scalar.new(16.8)),
-  track(Scalar.new(33.9))
-  ];
-  // When training, it's important to shuffle your data!
-  const shuffledInputProviderBuilder =
-  new InCPUMemoryShuffledInputProviderBuilder([xs, ys]);
-  const [xProvider, yProvider] =
-  shuffledInputProviderBuilder.getInputProviders();
+    const app = Elm.Main.fullscreen();
+    let sendEntry = async (data_: string) => {
+        return app.ports.dataIn.send({ tag: "NewData", data: {content:  data_} });
+    }
 
-  // Training is broken up into batches.
-  const NUM_BATCHES = 100;
-  const BATCH_SIZE = xs.length;
-  // Before we start training, we need to provide an optimizer. This is the
-  // object that is responsible for updating weights. The learning rate param
-  // is a value that represents how large of a step to make when updating
-  // weights. If this is too big, you may overstep and oscillate. If it is too
-  // small, the model may take a long time to train.
-  const LEARNING_RATE = .01;
-  const optimizer = new SGDOptimizer(LEARNING_RATE);
-  for (let i = 0; i < NUM_BATCHES; i++) {
-    // Train takes a cost tensor to minimize; this call trains one batch and
-    // returns the average cost of the batch as a Scalar.
-    const costValue = session.train(
-      cost,
-        // Map input providers to Tensors on the graph.
-        [{tensor: x, data: xProvider}, {tensor: yLabel, data: yProvider}],
-        BATCH_SIZE, optimizer, CostReduction.MEAN);
+    const data_raw = await get("https://api.opendota.com/api/publicMatches");
+    let draft_list:number[][] = parse_matches(data_raw)
+    let [Xs, Ys] = get_xs_ys(draft_list)
+    async function get_provider(){
+        const data_raw = await get("https://api.opendota.com/api/publicMatches?mmr_descending=true");
+        let draft_list:number[][] = parse_matches(data_raw)
+        let [Xs, Ys] = get_xs_ys(draft_list)
+        const shuffledInputProviderBuilder =
+            new InCPUMemoryShuffledInputProviderBuilder([Xs, Ys]);
+        return shuffledInputProviderBuilder.getInputProviders();
+    }
+    // (window as any).data_raw = data_raw
+    // await sendEntry(String(await data_raw));
+    await wait(0)
+    app.ports.dataOut.subscribe(msg => {
+        if (msg.tag == "LogError") {
+            console.error(msg.data);
+        } else if (msg.tag == "PageReady"){
+            console.log('PageReady');
+            pageReady_flag = true;
+        }
+    });
+    await math.scope(async (keep, track) => {
+        /**
+         * Inference
+         */
+        let result: NDArray =
+            math.sigmoid(session.eval(Yhat, [{tensor: X, data: Xs[0]}]));
+        console.log(result.shape);
+        console.log('result', await result.data());
+        /**
+         * Training
+         */
+        const NUM_BATCHES = 10;
+        const BATCH_SIZE = Xs.length;
+        const LEARNING_RATE = .01;
+        const optimizer = new SGDOptimizer(LEARNING_RATE);
+        let [xProvider, yProvider] = await get_provider()
+        let cost_val: Float32Array | Int32Array | Uint8Array
+        for (let i = 0; i < NUM_BATCHES; i++) {
+            const costValue = session.train(
+                cost,
+                // Map input providers to Tensors on the graph.
+                [{tensor: X, data: xProvider}, {tensor: Y, data: yProvider}],
+                BATCH_SIZE, optimizer, CostReduction.MEAN);
 
-   // pageReady
-    // await wait(0)
-    console.log('average cost: ' + await costValue.data());
-    sendEntry(String(await costValue.data()));
-  }
+            [[xProvider, yProvider], cost_val] = await Promise.all([ get_provider(), costValue.data()])
+            console.log('average cost: ' + cost_val);
+            // pageReady
+            // await wait(0)
+            // sendEntry(String(await costValue.data()));
+        }
 
-  // Now print the value from the trained model for x = 4, should be ~57.0.
-  result = session.eval(y, [{tensor: x, data: track(Scalar.new(4))}]);
-  console.log('result should be ~57.0:');
-  console.log(result.shape);
-  console.log(await result.data());
-  await sendEntry(String(await result.data()));
-});
+        // Now print the value from the trained model for x = 4, should be ~57.0.
+        result = math.sigmoid(session.eval(Yhat, [{tensor: X, data: Xs[0]}]));
+        console.log(result.shape);
+        console.log(await result.data());
+        await sendEntry(String(await result.data()));
+    });
 
 }
 run();

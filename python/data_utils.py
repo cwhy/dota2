@@ -14,6 +14,11 @@ for i, h in enumerate(hero_info.values()):
     hero_names.append(h['localized_name'])
     hero_id_map[str(h['id'])] = i
 
+with open('hero_id_map.json', 'w') as f:
+    json.dump(hero_id_map, f)
+
+with open('hero_names.json', 'w') as f:
+    json.dump(hero_names, f)
 
 def shuffle_list(_l):
     indices = np.random.permutation(len(contents))
