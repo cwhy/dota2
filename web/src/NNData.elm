@@ -1,21 +1,26 @@
 module NNData exposing (..)
 
-import Json.Decode exposing (Decoder)
-import Json.Encode
+import Json.Decode exposing (Decoder, index, map2)
 
 
 nnDataDecoder : Decoder NNData
 nnDataDecoder =
     Json.Decode.map NNData
-        (Json.Decode.at [ "content" ] Json.Decode.string)
-
-
-encodeNNData : NNData -> Json.Encode.Value
-encodeNNData nnData =
-    Json.Encode.object
-        [ ( "content", Json.Encode.string nnData.content ) ]
+        (Json.Decode.at [ "content" ]
+            (Json.Decode.list
+                (map2
+                    (\a b ->
+                        ( a
+                        , b
+                        )
+                    )
+                    (index 0 Json.Decode.float)
+                    (index 1 Json.Decode.float)
+                )
+            )
+        )
 
 
 type alias NNData =
-    { content : String
+    { content : List ( Float, Float )
     }

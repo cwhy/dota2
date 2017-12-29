@@ -2,6 +2,7 @@ import tensorflow as tf
 import data_utils as du
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 EMBEDDING_DIM = 2
 batch_size = 100
@@ -21,6 +22,7 @@ prediction = tf.nn.softmax(hidden_representation @ W2 + b2)
 loss = tf.reduce_mean(-tf.reduce_sum(y_label * tf.log(prediction), 1))
 train_step = tf.train.RMSPropOptimizer(0.01).minimize(loss)
 
+saver = tf.train.Saver()
 sess = tf.Session()
 init = tf.global_variables_initializer()
 sess.run(init)
@@ -43,9 +45,10 @@ for _ in range(n_iters):
 
 all_emb = sess.run(hidden_representation,
                    feed_dict={x: np.eye(n_heros)})
-
+saver.save(sess, './model.ckpt')
 fig, ax = plt.subplots()
 ax.scatter(all_emb[:, 0], all_emb[:, 1])
+
 
 for i, txt in enumerate(du.hero_names):
     ax.annotate(txt, (all_emb[i, 0], all_emb[i, 1]))
