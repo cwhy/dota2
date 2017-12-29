@@ -17,7 +17,7 @@ for i, h in enumerate(hero_info.values()):
 with open('hero_id_map.json', 'w') as f:
     json.dump(hero_id_map, f)
 
-with open('hero_names.json', 'w') as f:
+with open('hero_name_list.json', 'w') as f:
     json.dump(hero_names, f)
 
 def shuffle_list(_l):

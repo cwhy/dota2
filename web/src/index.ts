@@ -2,15 +2,13 @@
 
 import {Scalar, Graph, Tensor, SGDOptimizer, CostReduction, Session,
     ENV, NDArray, Array2D, Array1D, InputProvider,
-    InCPUMemoryShuffledInputProviderBuilder} from 'deeplearn';
+    InGPUMemoryShuffledInputProviderBuilder} from 'deeplearn';
 // import { Main } from "./Main.elm";
 import * as Elm from './Main'
 // import * as hero_id_map from './.json';
 declare function require(path: string): any;
 var hero_id_map = require('./hero_id_map.json');
 let map_hero_id: (a:string) => number = (a) => hero_id_map[a]
-
-// require('./index.html');
 
 
 function wait(ms:number) {
@@ -84,15 +82,15 @@ function get_xs_ys(draft_list: number[][]): [Array1D[], Array1D[]]{
     let ys: Array1D[] = []
     for (let i:number = 0; i < draft_list.length; i++){
         for (let j:number = 0; j < 5; j++){
-            let x = Array1D.zeros([113])
-            let y = Array1D.zeros([113])
+            let x = Array(113).fill(0)
+            let y = Array(113).fill(0)
             let y_idx:number = draft_list[i][j]
-            y.set(1.0, y_idx)
+            y[y_idx] = 1
             for (let k of draft_list[i]){
-                if (k != y_idx) x.set(1.0, k)
+                if (k != y_idx) x[k] = 1
             }
-            xs.push(x)
-            ys.push(y)
+            xs.push(Array1D.new(x))
+            ys.push(Array1D.new(y))
         }
     }
     return [xs, ys]
@@ -112,12 +110,12 @@ async function run() {
         let draft_list:number[][] = parse_matches(data_raw)
         let [Xs, Ys] = get_xs_ys(draft_list)
         const shuffledInputProviderBuilder =
-            new InCPUMemoryShuffledInputProviderBuilder([Xs, Ys]);
+            new InGPUMemoryShuffledInputProviderBuilder([Xs, Ys]);
         return shuffledInputProviderBuilder.getInputProviders();
     }
     // (window as any).data_raw = data_raw
     // await sendEntry(String(await data_raw));
-    await wait(0)
+        /*
     app.ports.dataOut.subscribe(msg => {
         if (msg.tag == "LogError") {
             console.error(msg.data);
@@ -126,42 +124,45 @@ async function run() {
             pageReady_flag = true;
         }
     });
+         */
     await math.scope(async (keep, track) => {
         /**
          * Inference
-         */
         let result: NDArray =
-            math.sigmoid(session.eval(Yhat, [{tensor: X, data: Xs[0]}]));
+            math.softmax(session.eval(Yhat, [{tensor: X, data: Xs[0]}]));
         console.log(result.shape);
         console.log('result', await result.data());
-        /**
          * Training
          */
         const NUM_BATCHES = 10;
         const BATCH_SIZE = Xs.length;
         const LEARNING_RATE = .01;
         const optimizer = new SGDOptimizer(LEARNING_RATE);
-        let [xProvider, yProvider] = await get_provider()
-        let cost_val: Float32Array | Int32Array | Uint8Array
+        const tasks = []
+        //const [xProvider, yProvider] = await 
         for (let i = 0; i < NUM_BATCHES; i++) {
-            const costValue = session.train(
-                cost,
-                // Map input providers to Tensors on the graph.
-                [{tensor: X, data: xProvider}, {tensor: Y, data: yProvider}],
-                BATCH_SIZE, optimizer, CostReduction.MEAN);
+            tasks.push(get_provider().then(([xProvider, yProvider]) =>{
+                session.train(
+                    cost,
+                    [{tensor: X, data: xProvider}, {tensor: Y, data: yProvider}],
+                    BATCH_SIZE, optimizer, CostReduction.MEAN);
+            }))
 
-            [[xProvider, yProvider], cost_val] = await Promise.all([ get_provider(), costValue.data()])
-            console.log('average cost: ' + cost_val);
             // pageReady
             // await wait(0)
             // sendEntry(String(await costValue.data()));
         }
+        await Promise.all(tasks)
+            /*
+        let cost_val: Float32Array | Int32Array | Uint8Array = await session.eval(cost, [{tensor: X, data: xProvider}, {tensor: Y, data: yProvider}])
+        console.log('average cost: ' + cost_val);
+             */
 
         // Now print the value from the trained model for x = 4, should be ~57.0.
-        result = math.sigmoid(session.eval(Yhat, [{tensor: X, data: Xs[0]}]));
-        console.log(result.shape);
-        console.log(await result.data());
-        await sendEntry(String(await result.data()));
+        // result = math.softmax(session.eval(Yhat, [{tensor: X, data: Xs[0]}]));
+        // console.log(result.shape);
+        // console.log(await result.data());
+        // await sendEntry(String(await result.data()));
     });
 
 }
