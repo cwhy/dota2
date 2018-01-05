@@ -5,6 +5,7 @@ import {Scalar, Graph, Tensor, SGDOptimizer, CostReduction, Session,
     InGPUMemoryShuffledInputProviderBuilder} from 'deeplearn';
 // import { Main } from "./Main.elm";
 import * as Elm from './Main'
+import './manifest.json'
 // import * as hero_id_map from './.json';
 declare function require(path: string): any;
 var hero_id_map = require('./hero_id_map.json');
@@ -139,7 +140,7 @@ async function run() {
         const LEARNING_RATE = .01;
         const optimizer = new SGDOptimizer(LEARNING_RATE);
         const tasks = []
-        //const [xProvider, yProvider] = await 
+        //const [xProvider, yProvider] = await
         for (let i = 0; i < NUM_BATCHES; i++) {
             tasks.push(get_provider().then(([xProvider, yProvider]) =>{
                 session.train(
