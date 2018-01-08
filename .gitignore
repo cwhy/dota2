@@ -5,3 +5,4 @@ web/elm-stuff/*
 web/dist/*
 *.db
 .*.swp
+*.ckpt*

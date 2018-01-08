@@ -1,6 +1,6 @@
 port module NNActor exposing (..)
 
-import NNData exposing (NNData, encodeNNData, nnDataDecoder)
+import NNData exposing (NNData, nnDataDecoder)
 import Json.Decode exposing (decodeValue)
 import Json.Encode
 
@@ -19,7 +19,7 @@ sendData data =
 
 
 type DataIn
-    = NewData NNData
+    = NewHeroVecs NNData
 
 
 type DataOut
@@ -43,10 +43,10 @@ receiveData dataHandler errorHandler =
     dataIn
         (\outsideInfo ->
             case outsideInfo.tag of
-                "NewData" ->
+                "NewHeroVecs" ->
                     case decodeValue (nnDataDecoder) outsideInfo.data of
                         Ok entries ->
-                            dataHandler <| NewData entries
+                            dataHandler <| NewHeroVecs entries
 
                         Err e ->
                             errorHandler e

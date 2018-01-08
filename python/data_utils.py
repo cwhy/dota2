@@ -9,16 +9,28 @@ with open('../crawl/match_id_nolimit') as file_:
 
 hero_info = json.load(open('../constants/hero_names.json'))
 hero_names = []
+elm_gen = ""
+
+
+def get_elm_str(name):
+    return f"{{name=\"{name}\"\n,label=\n,vec=Nothing}}\n"
+
+
 hero_id_map = dict()
 for i, h in enumerate(hero_info.values()):
     hero_names.append(h['localized_name'])
     hero_id_map[str(h['id'])] = i
+    elm_gen += get_elm_str(h['localized_name'])
 
-with open('hero_id_map.json', 'w') as f:
-    json.dump(hero_id_map, f)
+# with open('hero_id_map.json', 'w') as f:
+#     json.dump(hero_id_map, f)
 
-with open('hero_name_list.json', 'w') as f:
-    json.dump(hero_names, f)
+# with open('hero_name_list.json', 'w') as f:
+#     json.dump(hero_names, f)
+
+with open('hero_name_elm.elm', 'w') as f:
+    f.write(elm_gen)
+
 
 def shuffle_list(_l):
     indices = np.random.permutation(len(contents))
