@@ -6,34 +6,8 @@
       2
     ]
   },
-  "Variable/RMSProp": {
-    "filename": "Variable_RMSProp",
-    "shape": [
-      113,
-      2
-    ]
-  },
-  "Variable/RMSProp_1": {
-    "filename": "Variable_RMSProp_1",
-    "shape": [
-      113,
-      2
-    ]
-  },
   "Variable_1": {
     "filename": "Variable_1",
-    "shape": [
-      2
-    ]
-  },
-  "Variable_1/RMSProp": {
-    "filename": "Variable_1_RMSProp",
-    "shape": [
-      2
-    ]
-  },
-  "Variable_1/RMSProp_1": {
-    "filename": "Variable_1_RMSProp_1",
     "shape": [
       2
     ]
@@ -45,34 +19,8 @@
       113
     ]
   },
-  "Variable_2/RMSProp": {
-    "filename": "Variable_2_RMSProp",
-    "shape": [
-      2,
-      113
-    ]
-  },
-  "Variable_2/RMSProp_1": {
-    "filename": "Variable_2_RMSProp_1",
-    "shape": [
-      2,
-      113
-    ]
-  },
   "Variable_3": {
     "filename": "Variable_3",
-    "shape": [
-      113
-    ]
-  },
-  "Variable_3/RMSProp": {
-    "filename": "Variable_3_RMSProp",
-    "shape": [
-      113
-    ]
-  },
-  "Variable_3/RMSProp_1": {
-    "filename": "Variable_3_RMSProp_1",
     "shape": [
       113
     ]

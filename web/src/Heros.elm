@@ -1,6 +1,11 @@
 module Heros exposing (..)
 
 
+baseImgUrl : String
+baseImgUrl =
+    "https://api.opendota.com"
+
+
 type HeroVec
     = Position { x : Float, y : Float }
     | NoPosition
@@ -8,7 +13,7 @@ type HeroVec
 
 type alias Hero =
     { name : String
-    , label : String
+    , iconUrl : String
     , vec : HeroVec
     }
 
@@ -16,455 +21,463 @@ type alias Hero =
 initHeros : List Hero
 initHeros =
     [ { name = "Anti-Mage"
-      , label = "AM"
+      , iconUrl = "/apps/dota2/images/heroes/antimage_icon.png"
       , vec = NoPosition
       }
     , { name = "Axe"
-      , label = "Axe"
+      , iconUrl = "/apps/dota2/images/heroes/axe_icon.png"
       , vec = NoPosition
       }
     , { name = "Bane"
-      , label = "Bane"
+      , iconUrl = "/apps/dota2/images/heroes/bane_icon.png"
       , vec = NoPosition
       }
     , { name = "Bloodseeker"
-      , label = "BS"
+      , iconUrl = "/apps/dota2/images/heroes/bloodseeker_icon.png"
       , vec = NoPosition
       }
     , { name = "Crystal Maiden"
-      , label = "CM"
+      , iconUrl = "/apps/dota2/images/heroes/crystal_maiden_icon.png"
       , vec = NoPosition
       }
     , { name = "Drow Ranger"
-      , label = "Drow"
+      , iconUrl = "/apps/dota2/images/heroes/drow_ranger_icon.png"
       , vec = NoPosition
       }
     , { name = "Earthshaker"
-      , label = "ES"
+      , iconUrl = "/apps/dota2/images/heroes/earthshaker_icon.png"
       , vec = NoPosition
       }
     , { name = "Juggernaut"
-      , label = "Jugg"
+      , iconUrl = "/apps/dota2/images/heroes/juggernaut_icon.png"
       , vec = NoPosition
       }
     , { name = "Mirana"
-      , label = "Mirana"
+      , iconUrl = "/apps/dota2/images/heroes/mirana_icon.png"
       , vec = NoPosition
       }
     , { name = "Morphling"
-      , label = "Morph"
+      , iconUrl = "/apps/dota2/images/heroes/morphling_icon.png"
       , vec = NoPosition
       }
     , { name = "Shadow Fiend"
-      , label = "SF"
+      , iconUrl = "/apps/dota2/images/heroes/nevermore_icon.png"
       , vec = NoPosition
       }
     , { name = "Phantom Lancer"
-      , label = "PL"
+      , iconUrl = "/apps/dota2/images/heroes/phantom_lancer_icon.png"
       , vec = NoPosition
       }
     , { name = "Puck"
-      , label = "Puck"
+      , iconUrl = "/apps/dota2/images/heroes/puck_icon.png"
       , vec = NoPosition
       }
     , { name = "Pudge"
-      , label = "Pudge"
+      , iconUrl = "/apps/dota2/images/heroes/pudge_icon.png"
       , vec = NoPosition
       }
     , { name = "Razor"
-      , label = "Razor"
+      , iconUrl = "/apps/dota2/images/heroes/razor_icon.png"
       , vec = NoPosition
       }
     , { name = "Sand King"
-      , label = "SK"
+      , iconUrl = "/apps/dota2/images/heroes/sand_king_icon.png"
       , vec = NoPosition
       }
     , { name = "Storm Spirit"
-      , label = "Storm"
+      , iconUrl = "/apps/dota2/images/heroes/storm_spirit_icon.png"
       , vec = NoPosition
       }
     , { name = "Sven"
-      , label = "Sven"
+      , iconUrl = "/apps/dota2/images/heroes/sven_icon.png"
       , vec = NoPosition
       }
     , { name = "Tiny"
-      , label = "Tiny"
+      , iconUrl = "/apps/dota2/images/heroes/tiny_icon.png"
       , vec = NoPosition
       }
     , { name = "Vengeful Spirit"
-      , label = "Venge"
+      , iconUrl = "/apps/dota2/images/heroes/vengefulspirit_icon.png"
       , vec = NoPosition
       }
     , { name = "Windranger"
-      , label = "WR"
+      , iconUrl = "/apps/dota2/images/heroes/windrunner_icon.png"
       , vec = NoPosition
       }
     , { name = "Zeus"
-      , label = "Zeus"
+      , iconUrl = "/apps/dota2/images/heroes/zuus_icon.png"
       , vec = NoPosition
       }
     , { name = "Kunkka"
-      , label = "Kunkka"
+      , iconUrl = "/apps/dota2/images/heroes/kunkka_icon.png"
       , vec = NoPosition
       }
     , { name = "Lina"
-      , label = "Lina"
+      , iconUrl = "/apps/dota2/images/heroes/lina_icon.png"
       , vec = NoPosition
       }
     , { name = "Lion"
-      , label = "Lion"
+      , iconUrl = "/apps/dota2/images/heroes/lion_icon.png"
       , vec = NoPosition
       }
     , { name = "Shadow Shaman"
-      , label = "SS"
+      , iconUrl = "/apps/dota2/images/heroes/shadow_shaman_icon.png"
       , vec = NoPosition
       }
     , { name = "Slardar"
-      , label = "Slardar"
+      , iconUrl = "/apps/dota2/images/heroes/slardar_icon.png"
       , vec = NoPosition
       }
     , { name = "Tidehunter"
-      , label = "Tide"
+      , iconUrl = "/apps/dota2/images/heroes/tidehunter_icon.png"
       , vec = NoPosition
       }
     , { name = "Witch Doctor"
-      , label = "WD"
+      , iconUrl = "/apps/dota2/images/heroes/witch_doctor_icon.png"
       , vec = NoPosition
       }
     , { name = "Lich"
-      , label = "Lich"
+      , iconUrl = "/apps/dota2/images/heroes/lich_icon.png"
       , vec = NoPosition
       }
     , { name = "Riki"
-      , label = "Riki"
+      , iconUrl = "/apps/dota2/images/heroes/riki_icon.png"
       , vec = NoPosition
       }
     , { name = "Enigma"
-      , label = "Enigma"
+      , iconUrl = "/apps/dota2/images/heroes/enigma_icon.png"
       , vec = NoPosition
       }
     , { name = "Tinker"
-      , label = "Tinker"
+      , iconUrl = "/apps/dota2/images/heroes/tinker_icon.png"
       , vec = NoPosition
       }
     , { name = "Sniper"
-      , label = "Sniper"
+      , iconUrl = "/apps/dota2/images/heroes/sniper_icon.png"
       , vec = NoPosition
       }
     , { name = "Necrophos"
-      , label = "Necro"
+      , iconUrl = "/apps/dota2/images/heroes/necrolyte_icon.png"
       , vec = NoPosition
       }
     , { name = "Warlock"
-      , label = "Warlock"
+      , iconUrl = "/apps/dota2/images/heroes/warlock_icon.png"
       , vec = NoPosition
       }
     , { name = "Beastmaster"
-      , label = "BM"
+      , iconUrl = "/apps/dota2/images/heroes/beastmaster_icon.png"
       , vec = NoPosition
       }
     , { name = "Queen of Pain"
-      , label = "QoP"
+      , iconUrl = "/apps/dota2/images/heroes/queenofpain_icon.png"
       , vec = NoPosition
       }
     , { name = "Venomancer"
-      , label = "Veno"
+      , iconUrl = "/apps/dota2/images/heroes/venomancer_icon.png"
       , vec = NoPosition
       }
     , { name = "Faceless Void"
-      , label = "Void"
+      , iconUrl = "/apps/dota2/images/heroes/faceless_void_icon.png"
       , vec = NoPosition
       }
     , { name = "Wraith King"
-      , label = "WK"
+      , iconUrl = "/apps/dota2/images/heroes/skeleton_king_icon.png"
       , vec = NoPosition
       }
     , { name = "Death Prophet"
-      , label = "DP"
+      , iconUrl = "/apps/dota2/images/heroes/death_prophet_icon.png"
       , vec = NoPosition
       }
     , { name = "Phantom Assassin"
-      , label = "PA"
+      , iconUrl = "/apps/dota2/images/heroes/phantom_assassin_icon.png"
       , vec = NoPosition
       }
     , { name = "Pugna"
-      , label = "Pugna"
+      , iconUrl = "/apps/dota2/images/heroes/pugna_icon.png"
       , vec = NoPosition
       }
     , { name = "Templar Assassin"
-      , label = "TA"
+      , iconUrl = "/apps/dota2/images/heroes/templar_assassin_icon.png"
       , vec = NoPosition
       }
     , { name = "Viper"
-      , label = "Viper"
+      , iconUrl = "/apps/dota2/images/heroes/viper_icon.png"
       , vec = NoPosition
       }
     , { name = "Luna"
-      , label = "Luna"
+      , iconUrl = "/apps/dota2/images/heroes/luna_icon.png"
       , vec = NoPosition
       }
     , { name = "Dragon Knight"
-      , label = "DK"
+      , iconUrl = "/apps/dota2/images/heroes/dragon_knight_icon.png"
       , vec = NoPosition
       }
     , { name = "Dazzle"
-      , label = "Dazzle"
+      , iconUrl = "/apps/dota2/images/heroes/dazzle_icon.png"
       , vec = NoPosition
       }
     , { name = "Clockwerk"
-      , label = "Clock"
+      , iconUrl = "/apps/dota2/images/heroes/rattletrap_icon.png"
       , vec = NoPosition
       }
     , { name = "Leshrac"
-      , label = "Leshrac"
+      , iconUrl = "/apps/dota2/images/heroes/leshrac_icon.png"
       , vec = NoPosition
       }
     , { name = "Nature's Prophet"
-      , label = "NP"
+      , iconUrl = "/apps/dota2/images/heroes/furion_icon.png"
       , vec = NoPosition
       }
     , { name = "Lifestealer"
-      , label = "N'aix"
+      , iconUrl = "/apps/dota2/images/heroes/life_stealer_icon.png"
       , vec = NoPosition
       }
     , { name = "Dark Seer"
-      , label = "DS"
+      , iconUrl = "/apps/dota2/images/heroes/dark_seer_icon.png"
       , vec = NoPosition
       }
     , { name = "Clinkz"
-      , label = "Clinkz"
+      , iconUrl = "/apps/dota2/images/heroes/clinkz_icon.png"
       , vec = NoPosition
       }
     , { name = "Omniknight"
-      , label = "Omni"
+      , iconUrl = "/apps/dota2/images/heroes/omniknight_icon.png"
       , vec = NoPosition
       }
     , { name = "Enchantress"
-      , label = "Bambi"
+      , iconUrl = "/apps/dota2/images/heroes/enchantress_icon.png"
       , vec = NoPosition
       }
     , { name = "Huskar"
-      , label = "Huskar"
+      , iconUrl = "/apps/dota2/images/heroes/huskar_icon.png"
       , vec = NoPosition
       }
     , { name = "Night Stalker"
-      , label = "NS"
+      , iconUrl = "/apps/dota2/images/heroes/night_stalker_icon.png"
       , vec = NoPosition
       }
     , { name = "Broodmother"
-      , label = "Brood"
+      , iconUrl = "/apps/dota2/images/heroes/broodmother_icon.png"
       , vec = NoPosition
       }
     , { name = "Bounty Hunter"
-      , label = "BH"
+      , iconUrl = "/apps/dota2/images/heroes/bounty_hunter_icon.png"
       , vec = NoPosition
       }
     , { name = "Weaver"
-      , label = "Weaver"
+      , iconUrl = "/apps/dota2/images/heroes/weaver_icon.png"
       , vec = NoPosition
       }
     , { name = "Jakiro"
-      , label = "Jakiro"
+      , iconUrl = "/apps/dota2/images/heroes/jakiro_icon.png"
       , vec = NoPosition
       }
     , { name = "Batrider"
-      , label = "Bat"
+      , iconUrl = "/apps/dota2/images/heroes/batrider_icon.png"
       , vec = NoPosition
       }
     , { name = "Chen"
-      , label = "Chen"
+      , iconUrl = "/apps/dota2/images/heroes/chen_icon.png"
       , vec = NoPosition
       }
     , { name = "Spectre"
-      , label = "Spec"
+      , iconUrl = "/apps/dota2/images/heroes/spectre_icon.png"
       , vec = NoPosition
       }
     , { name = "Ancient Apparition"
-      , label = "AA"
+      , iconUrl = "/apps/dota2/images/heroes/ancient_apparition_icon.png"
       , vec = NoPosition
       }
     , { name = "Doom"
-      , label = "Doom"
+      , iconUrl = "/apps/dota2/images/heroes/doom_bringer_icon.png"
       , vec = NoPosition
       }
     , { name = "Ursa"
-      , label = "Ursa"
+      , iconUrl = "/apps/dota2/images/heroes/ursa_icon.png"
       , vec = NoPosition
       }
     , { name = "Spirit Breaker"
-      , label = "SB"
+      , iconUrl = "/apps/dota2/images/heroes/spirit_breaker_icon.png"
       , vec = NoPosition
       }
     , { name = "Gyrocopter"
-      , label = "Gyro"
+      , iconUrl = "/apps/dota2/images/heroes/gyrocopter_icon.png"
       , vec = NoPosition
       }
     , { name = "Alchemist"
-      , label = "Alch"
+      , iconUrl = "/apps/dota2/images/heroes/alchemist_icon.png"
       , vec = NoPosition
       }
     , { name = "Invoker"
-      , label = "Invoker"
+      , iconUrl = "/apps/dota2/images/heroes/invoker_icon.png"
       , vec = NoPosition
       }
     , { name = "Silencer"
-      , label = "Silencer"
+      , iconUrl = "/apps/dota2/images/heroes/silencer_icon.png"
       , vec = NoPosition
       }
     , { name = "Outworld Devourer"
-      , label = "OD"
+      , iconUrl = "/apps/dota2/images/heroes/obsidian_destroyer_icon.png"
       , vec = NoPosition
       }
     , { name = "Lycan"
-      , label = "Lycan"
+      , iconUrl = "/apps/dota2/images/heroes/lycan_icon.png"
       , vec = NoPosition
       }
     , { name = "Brewmaster"
-      , label = "BM"
+      , iconUrl = "/apps/dota2/images/heroes/brewmaster_icon.png"
       , vec = NoPosition
       }
     , { name = "Shadow Demon"
-      , label = "SD"
+      , iconUrl = "/apps/dota2/images/heroes/shadow_demon_icon.png"
       , vec = NoPosition
       }
     , { name = "Lone Druid"
-      , label = "LD"
+      , iconUrl = "/apps/dota2/images/heroes/lone_druid_icon.png"
       , vec = NoPosition
       }
     , { name = "Chaos Knight"
-      , label = "CK"
+      , iconUrl = "/apps/dota2/images/heroes/chaos_knight_icon.png"
       , vec = NoPosition
       }
     , { name = "Meepo"
-      , label = "Meepo"
+      , iconUrl = "/apps/dota2/images/heroes/meepo_icon.png"
       , vec = NoPosition
       }
     , { name = "Treant Protector"
-      , label = "Treant"
+      , iconUrl = "/apps/dota2/images/heroes/treant_icon.png"
       , vec = NoPosition
       }
     , { name = "Ogre Magi"
-      , label = "Ogre"
+      , iconUrl = "/apps/dota2/images/heroes/ogre_magi_icon.png"
       , vec = NoPosition
       }
     , { name = "Undying"
-      , label = "Undying"
+      , iconUrl = "/apps/dota2/images/heroes/undying_icon.png"
       , vec = NoPosition
       }
     , { name = "Rubick"
-      , label = "Rubick"
+      , iconUrl = "/apps/dota2/images/heroes/rubick_icon.png"
       , vec = NoPosition
       }
     , { name = "Disruptor"
-      , label = "Thrall"
+      , iconUrl = "/apps/dota2/images/heroes/disruptor_icon.png"
       , vec = NoPosition
       }
     , { name = "Nyx Assassin"
-      , label = "Nyx"
+      , iconUrl = "/apps/dota2/images/heroes/nyx_assassin_icon.png"
       , vec = NoPosition
       }
     , { name = "Naga Siren"
-      , label = "Naga"
+      , iconUrl = "/apps/dota2/images/heroes/naga_siren_icon.png"
       , vec = NoPosition
       }
     , { name = "Keeper of the Light"
-      , label = "KotL"
+      , iconUrl = "/apps/dota2/images/heroes/keeper_of_the_light_icon.png"
       , vec = NoPosition
       }
     , { name = "Io"
-      , label = "Io"
+      , iconUrl = "/apps/dota2/images/heroes/wisp_icon.png"
       , vec = NoPosition
       }
     , { name = "Visage"
-      , label = "Visage"
+      , iconUrl = "/apps/dota2/images/heroes/visage_icon.png"
       , vec = NoPosition
       }
     , { name = "Slark"
-      , label = "Slark"
+      , iconUrl = "/apps/dota2/images/heroes/slark_icon.png"
       , vec = NoPosition
       }
     , { name = "Medusa"
-      , label = "Medusa"
+      , iconUrl = "/apps/dota2/images/heroes/medusa_icon.png"
       , vec = NoPosition
       }
     , { name = "Troll Warlord"
-      , label = "Troll"
+      , iconUrl = "/apps/dota2/images/heroes/troll_warlord_icon.png"
       , vec = NoPosition
       }
     , { name = "Centaur Warrunner"
-      , label = "Centaur"
+      , iconUrl = "/apps/dota2/images/heroes/centaur_icon.png"
       , vec = NoPosition
       }
     , { name = "Magnus"
-      , label = "Magnus"
+      , iconUrl = "/apps/dota2/images/heroes/magnataur_icon.png"
       , vec = NoPosition
       }
     , { name = "Timbersaw"
-      , label = "Timber"
+      , iconUrl = "/apps/dota2/images/heroes/shredder_icon.png"
       , vec = NoPosition
       }
     , { name = "Bristleback"
-      , label = "BB"
+      , iconUrl = "/apps/dota2/images/heroes/bristleback_icon.png"
       , vec = NoPosition
       }
     , { name = "Tusk"
-      , label = "Tusk"
+      , iconUrl = "/apps/dota2/images/heroes/tusk_icon.png"
       , vec = NoPosition
       }
     , { name = "Skywrath Mage"
-      , label = "Sky"
+      , iconUrl = "/apps/dota2/images/heroes/skywrath_mage_icon.png"
       , vec = NoPosition
       }
     , { name = "Abaddon"
-      , label = "Abaddon"
+      , iconUrl = "/apps/dota2/images/heroes/abaddon_icon.png"
       , vec = NoPosition
       }
     , { name = "Elder Titan"
-      , label = "ET"
+      , iconUrl = "/apps/dota2/images/heroes/elder_titan_icon.png"
       , vec = NoPosition
       }
     , { name = "Legion Commander"
-      , label = "LC"
+      , iconUrl = "/apps/dota2/images/heroes/legion_commander_icon.png"
       , vec = NoPosition
       }
     , { name = "Techies"
-      , label = "Techies"
+      , iconUrl = "/apps/dota2/images/heroes/techies_icon.png"
       , vec = NoPosition
       }
     , { name = "Ember Spirit"
-      , label = "Ember"
+      , iconUrl = "/apps/dota2/images/heroes/ember_spirit_icon.png"
       , vec = NoPosition
       }
     , { name = "Earth Spirit"
-      , label = "ES"
+      , iconUrl = "/apps/dota2/images/heroes/earth_spirit_icon.png"
       , vec = NoPosition
       }
     , { name = "Underlord"
-      , label = "Pitlord"
+      , iconUrl = "/apps/dota2/images/heroes/abyssal_underlord_icon.png"
       , vec = NoPosition
       }
     , { name = "Terrorblade"
-      , label = "TB"
+      , iconUrl = "/apps/dota2/images/heroes/terrorblade_icon.png"
       , vec = NoPosition
       }
     , { name = "Phoenix"
-      , label = "Phoenix"
+      , iconUrl = "/apps/dota2/images/heroes/phoenix_icon.png"
       , vec = NoPosition
       }
     , { name = "Oracle"
-      , label = "Oracle"
+      , iconUrl = "/apps/dota2/images/heroes/oracle_icon.png"
       , vec = NoPosition
       }
     , { name = "Winter Wyvern"
-      , label = "Wyvern"
+      , iconUrl = "/apps/dota2/images/heroes/winter_wyvern_icon.png"
       , vec = NoPosition
       }
     , { name = "Arc Warden"
-      , label = "AW"
+      , iconUrl = "/apps/dota2/images/heroes/arc_warden_icon.png"
       , vec = NoPosition
       }
     , { name = "Monkey King"
-      , label = "Monkey"
+      , iconUrl = "/apps/dota2/images/heroes/monkey_king_icon.png"
+      , vec = NoPosition
+      }
+    , { name = "Dark Willow"
+      , iconUrl = "/apps/dota2/images/heroes/dark_willow_icon.png"
+      , vec = NoPosition
+      }
+    , { name = "Pangolier"
+      , iconUrl = "/apps/dota2/images/heroes/pangolier_icon.png"
       , vec = NoPosition
       }
     ]

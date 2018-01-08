@@ -1,9 +1,15 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+import * as webpack from 'webpack'
+import * as path from 'path'
+import * as HtmlWebpackPlugin from 'html-webpack-plugin'
+import * as CleanWebpackPlugin from 'clean-webpack-plugin'
+import * as CopyWebpackPlugin from 'copy-webpack-plugin'
+import DtsGeneratorPlugin, {IDtsGeneratorPluginOptions} from 'dts-generator-webpack-plugin';
+const dtsGeneratorPluginOptions: IDtsGeneratorPluginOptions = {
+        name: 'dotaconstants'
+};
 
-module.exports = {
+
+const webpackConfig: webpack.Configuration = {
     entry: './src/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -40,7 +46,7 @@ module.exports = {
             { test: /\.tsx?$/, loader: "ts-loader" }
 
         ],
-        noParse: /\.(elm)$/,
+        noParse: /\.elm$/,
     },
     resolve: {
         extensions: ['.js', '.ts', '.json', '.elm']
@@ -52,7 +58,9 @@ module.exports = {
         ]),
         new HtmlWebpackPlugin({
             title: 'New App! PogChamp'
-        })
+        }),
+        new DtsGeneratorPlugin(dtsGeneratorPluginOptions)
+
     ],
     devServer: {
         contentBase: path.join(__dirname, "dist"),
@@ -62,3 +70,4 @@ module.exports = {
         port: 7777
     }
 };
+export default webpackConfig;

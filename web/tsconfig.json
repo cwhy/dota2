@@ -3,6 +3,7 @@
         "module": "commonjs",
         "lib": ["ES2015", "dom"],
         "strict": true,
-        "target": "es5"
+        "target": "es5",
+        "typeRoots": ["node_modules/@types", "./types"]
     }
 }

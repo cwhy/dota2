@@ -1,10 +1,12 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, text, program)
+import Html exposing (Html, div, text, program, input)
+import Html.Attributes as H exposing (..)
+import Html.Events exposing (onInput)
 import NNActor exposing (DataIn(NewHeroVecs), sendData, receiveData, DataOut(PageReady, LogError))
 import Plot exposing (..)
 import Svg exposing (Svg)
-import Svg.Attributes exposing (stroke, strokeDasharray, r, fill, strokeWidth)
+import Svg.Attributes exposing (xlinkHref, stroke, strokeDasharray, r, fill, strokeWidth)
 import Svg.Events exposing (onMouseOver, onMouseOut)
 import Round
 import Heros exposing (..)
@@ -14,10 +16,16 @@ import String exposing (dropLeft, dropRight)
 -- MODEL
 
 
+defaultIconSize : Float
+defaultIconSize =
+    50
+
+
 type alias Model =
     { title : String
     , heros : List Hero
     , rangeFrameHover : Maybe Point
+    , iconSize : Float
     }
 
 
@@ -26,6 +34,7 @@ init =
     ( { title = "Dota2 Hero Explorer"
       , heros = initHeros
       , rangeFrameHover = Nothing
+      , iconSize = defaultIconSize
       }
     , Cmd.none
     )
@@ -40,6 +49,7 @@ type Msg
     | Outside DataIn
     | LogErr String
     | HoverRangeFrame (Maybe Point)
+    | Slide String
 
 
 
@@ -50,19 +60,28 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [] [ text model.title ]
+        , input
+            [ H.type_ "range"
+            , H.value <| toString model.iconSize
+            , onInput Slide
+            , H.min "10"
+            , H.max "50"
+            ]
+            []
         , div []
             [ viewPlot
+                model.iconSize
                 model.rangeFrameHover
                 model.heros
             ]
         ]
 
 
-scatter : Maybe Point -> Series (List Hero) Msg
-scatter hinting =
+scatter : Float -> Maybe Point -> Series (List Hero) Msg
+scatter iconSize hinting =
     { axis = rangeFrameAxis hinting .y
     , interpolation = None
-    , toDataPoints = List.map (rangeFrameHintDot hinting)
+    , toDataPoints = List.map (rangeFrameHintDot iconSize hinting)
     }
 
 
@@ -76,6 +95,17 @@ heroLabel label x y =
         [ Svg.tspan [] [ Svg.text label ] ]
 
 
+heroIcon : Float -> String -> Float -> Float -> Svg Msg
+heroIcon iconSize iconUrl x y =
+    Svg.image
+        [ Svg.Attributes.x (toString x)
+        , Svg.Attributes.y (toString y)
+        , Svg.Attributes.width <| (toString iconSize) ++ "px"
+        , xlinkHref (baseImgUrl ++ iconUrl)
+        ]
+        []
+
+
 flashyLine : Float -> Float -> Point -> Maybe (AxisSummary -> LineCustomizations)
 flashyLine x y hinted =
     if hinted.x == x && hinted.y == y then
@@ -84,8 +114,8 @@ flashyLine x y hinted =
         Nothing
 
 
-rangeFrameHintDot : Maybe Point -> Hero -> DataPoint Msg
-rangeFrameHintDot hinted hero =
+rangeFrameHintDot : Float -> Maybe Point -> Hero -> DataPoint Msg
+rangeFrameHintDot iconSize hinted hero =
     let
         ( x, y ) =
             case hero.vec of
@@ -95,10 +125,10 @@ rangeFrameHintDot hinted hero =
                 Position { x, y } ->
                     ( x, y )
 
-        label =
-            hero.label
+        icon =
+            hero.iconUrl
     in
-        { view = Just (heroLabel label x y)
+        { view = Just (heroIcon iconSize icon x y)
         , xLine = Maybe.andThen (flashyLine x y) hinted
         , yLine = Maybe.andThen (flashyLine x y) hinted
         , xTick = Just (simpleTick x)
@@ -154,8 +184,8 @@ hintLabel hinted toValue =
         |> Maybe.withDefault []
 
 
-viewPlot : Maybe Point -> List Hero -> Svg.Svg Msg
-viewPlot hinting data =
+viewPlot : Float -> Maybe Point -> List Hero -> Svg.Svg Msg
+viewPlot iconSize hinting data =
     viewSeriesCustom
         { defaultSeriesPlotCustomizations
             | horizontalAxis = rangeFrameAxis hinting .x
@@ -165,7 +195,7 @@ viewPlot hinting data =
             , toRangeLowest = \y -> y - 0.02
             , toDomainLowest = \y -> y - 1
         }
-        [ scatter hinting ]
+        [ scatter iconSize hinting ]
         data
 
 
@@ -194,6 +224,14 @@ update msg model =
 
         LogErr err ->
             model ! [ sendData (LogError err) ]
+
+        Slide sliderInput ->
+            case String.toFloat sliderInput of
+                Ok iconSize ->
+                    { model | iconSize = iconSize } ! []
+
+                Err _ ->
+                    { model | iconSize = defaultIconSize } ! []
 
 
 

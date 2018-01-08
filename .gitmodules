@@ -1,0 +1,3 @@
+[submodule "web/data/dota"]
+	path = web/data/dota
+	url = git@github.com:odota/dotaconstants.git

@@ -6,10 +6,6 @@ import {Scalar, Graph, Tensor, SGDOptimizer, CostReduction, Session,
 // import { Main } from "./Main.elm";
 import * as Elm from './Main'
 // import * as hero_id_map from './.json';
-declare function require(path: string): any;
-require('../data/manifest.json')
-require('../data/Variable')
-require('../data/Variable_1')
 
 let vars_promise = new CheckpointLoader('./data').getAllVariables()
 function wait(ms:number) {

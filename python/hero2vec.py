@@ -2,7 +2,6 @@ import tensorflow as tf
 import data_utils as du
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 
 EMBEDDING_DIM = 2
 batch_size = 100
@@ -12,19 +11,18 @@ data_gen = du.get_heros_sampler(data_full, batch_size)
 x = tf.placeholder(tf.float32, shape=(None, n_heros))
 y_label = tf.placeholder(tf.float32, shape=(None, n_heros))
 
-W1 = tf.Variable(tf.random_normal([n_heros, EMBEDDING_DIM]))
-b1 = tf.Variable(tf.random_normal([EMBEDDING_DIM]))
+W1 = tf.Variable(tf.random_normal([n_heros, EMBEDDING_DIM]), name='E')
+b1 = tf.Variable(tf.random_normal([EMBEDDING_DIM]), name='Eb')
 hidden_representation = x @ W1 + b1
-W2 = tf.Variable(tf.random_normal([EMBEDDING_DIM, n_heros]))
-b2 = tf.Variable(tf.random_normal([n_heros]))
+W2 = tf.Variable(tf.random_normal([EMBEDDING_DIM, n_heros]), name='D')
+b2 = tf.Variable(tf.random_normal([n_heros]), name='Db')
 prediction = tf.nn.softmax(hidden_representation @ W2 + b2)
 
 loss = tf.reduce_mean(-tf.reduce_sum(y_label * tf.log(prediction), 1))
 train_step = tf.train.RMSPropOptimizer(0.01).minimize(loss)
 
-saver = tf.train.Saver()
+saver = tf.train.Saver(tf.trainable_variables())
 print([s.name for s in tf.trainable_variables()])
-raise Exception('STOP')
 sess = tf.Session()
 init = tf.global_variables_initializer()
 sess.run(init)
