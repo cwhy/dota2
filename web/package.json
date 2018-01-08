@@ -27,8 +27,7 @@
         "webpack-merge": "^4.1.1"
     },
     "scripts": {
-        "elm-ts-interop":
-        "elm-typescript-interop src/Main.elm src/NNActor.elm --output=src/Main/index.d.ts",
+        "elm-ts-interop": "elm-typescript-interop src/Main.elm src/NNActor.elm --output=src/Main/index.d.ts",
         "build": "webpack --config webpack.prod.js",
         "watch": "webpack-dev-server --progress --colors --config webpack.dev.js",
         "watch-prod": "webpack-dev-server --progress --colors --config webpack.prod.js",

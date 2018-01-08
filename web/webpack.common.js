@@ -31,7 +31,7 @@ module.exports = {
         ]
       },
       {
-        test:    /\.html$/,
+        test:    /\.(html|json|Variable|Variable_1)$/,
         exclude: /node_modules/,
         loader:  'file-loader?name=[name].[ext]',
       },

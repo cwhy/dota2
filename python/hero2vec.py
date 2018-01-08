@@ -23,6 +23,8 @@ loss = tf.reduce_mean(-tf.reduce_sum(y_label * tf.log(prediction), 1))
 train_step = tf.train.RMSPropOptimizer(0.01).minimize(loss)
 
 saver = tf.train.Saver()
+print([s.name for s in tf.trainable_variables()])
+raise Exception('STOP')
 sess = tf.Session()
 init = tf.global_variables_initializer()
 sess.run(init)
