@@ -1,8 +1,8 @@
-import { Elm } from '../src/Main.elm';
-import * as serviceWorker from './serviceWorker';
+import { Elm } from './elm/Main.elm';
+import * as serviceWorker from './js/serviceWorker';
 import * as tf from '@tensorflow/tfjs';
 import * as tfvis from '@tensorflow/tfjs-vis';
-import logoUrlF from './logo.svg'
+import logoUrlF from './assets/logo.svg'
 
 const app = Elm.Main.init({flags: {logoUrl: logoUrlF}});
 
