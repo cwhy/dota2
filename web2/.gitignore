@@ -1,0 +1,24 @@
+# Distribution
+dist/
+
+# elm-package generated files
+elm-stuff
+
+# elm-repl generated files
+repl-temp-*
+
+# Dependency directories
+node_modules
+
+# Yarn related
+yarn.lock
+yarn-error.log
+
+# Desktop Services Store on macOS
+.DS_Store
+
+# JetBrain stuff
+.idea
+
+# Parcel stuff
+.cache/*
