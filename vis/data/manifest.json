@@ -1,0 +1,28 @@
+{
+  "Variable": {
+    "filename": "Variable",
+    "shape": [
+      113,
+      2
+    ]
+  },
+  "Variable_1": {
+    "filename": "Variable_1",
+    "shape": [
+      2
+    ]
+  },
+  "Variable_2": {
+    "filename": "Variable_2",
+    "shape": [
+      2,
+      113
+    ]
+  },
+  "Variable_3": {
+    "filename": "Variable_3",
+    "shape": [
+      113
+    ]
+  }
+}
